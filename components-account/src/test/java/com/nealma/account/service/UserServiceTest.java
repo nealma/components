@@ -13,6 +13,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by neal.ma on 5/17/16.
@@ -73,6 +74,8 @@ public class UserServiceTest {
 
     @Test
     public void stringEmptyTest() {
+        int random =  ThreadLocalRandom.current().nextInt();
         StringUtil.isEmpty("");
+        LOGGER.debug("random=", random);
     }
 }

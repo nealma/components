@@ -30,19 +30,18 @@ public class MyAuthenticationFilter extends FormAuthenticationFilter {
      */
     @Override
     protected boolean executeLogin(ServletRequest request,ServletResponse response) throws Exception {
+
         AuthenticationToken token = createToken(request, response);
-        LOGGER.info(">>>>>>>>>>>>>>>> execute executeLogin <<<<<<<<<<<<<<<<<<<<<<<<<<<");
         if (token == null) {
-            String msg = "create AuthenticationToken error";
+            String msg = "Create AuthenticationToken Error.";
             throw new IllegalStateException(msg);
         }
-        HttpServletRequest req = (HttpServletRequest) request;
-        String username = (String) token.getPrincipal();
         Subject subject = getSubject(request, response);
+        LOGGER.info("username={}, password={}", token.getPrincipal(), token.getCredentials());
         try{
             subject.login(token);
         }catch (AuthenticationException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
             return super.onLoginFailure(token, e, request, response);
         }
         return super.onLoginSuccess(token, subject, request, response);

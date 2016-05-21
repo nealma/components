@@ -57,10 +57,11 @@ public class ShiroDaoRealm extends AuthorizingRealm {
         List<Resource> resources = user.getResources();
         if(resources != null){
             for (Resource resource : resources){
-                resourceNames.add(resource.getName());
+                resourceNames.add(resource.getPermission());
             }
         }
 
+        LOGGER.info("roleNames={} \n resourceNames={}", roleNames, resourceNames);
         /*授权信息，设置角色和权限*/
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo(roleNames);
         info.setStringPermissions(resourceNames);
@@ -77,27 +78,21 @@ public class ShiroDaoRealm extends AuthorizingRealm {
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken)
             throws AuthenticationException {
-        LOGGER.info(">>>>>>>>>>>>>>>> execute doGetAuthenticationInfo <<<<<<<<<<<<<<<<<<<<<<<<<<<");
         UsernamePasswordToken usernamePasswordToken = (UsernamePasswordToken) authenticationToken;
         String username = usernamePasswordToken.getUsername();
-        try {
-            if(username == null){
-                throw new AccountException("username can not be null.");
-            }
-            User user = managerService.fetchByUsername(username);
-            if(user == null) {
-                throw new UnknownAccountException("username not exists.");
-            }
-
-            /*查找到的用户与Token里面的用户进行比较  匹配则登陆成功，不匹配则登陆失败*/
-            return new SimpleAuthenticationInfo(user.getUsername(),
-                    user.getPassword(),
-                    getName()
-            );
-        } catch (DataSourceException e) {
-           LOGGER.debug("authentication is error by {}.", e.getMessage());
-           throw new DataSourceException("datasource error.");
+        if(username == null){
+            throw new AccountException("username can not be null.");
         }
+        User user = managerService.fetchByUsername(username);
+        if(user == null) {
+            throw new UnknownAccountException("username not exists.");
+        }
+
+        /*查找到的用户与Token里面的用户进行比较  匹配则登陆成功，不匹配则登陆失败*/
+        return new SimpleAuthenticationInfo(user.getUsername(),
+                user.getPassword(),
+                getName()
+        );
     }
 
     @Override

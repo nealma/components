@@ -24,8 +24,10 @@
         <property name="filterChainDefinitions">
             <value>
                 /login.jsp = anon
+                /register.jsp = anon
                 /login.do = authc
                 /logout.do = logout
+                /register.do = anon
                 /*.do=authc
                 <!--/*.do=authc,sensitiveWords-->
                 <!--/*.do = syslog-->
@@ -35,7 +37,7 @@
     <!--访问时必须认证过滤器-->
     <bean id="authcFilter"  class="com.nealma.account.shiro.filter.MyAuthenticationFilter"/>
     <!--退出登录过滤器-->
-    <bean id="logoutFilter" class="com.nealma.account.shiro.filter.LogOutFilter"/>
+    <bean id="logoutFilter" class="com.nealma.account.shiro.filter.MyLogoutFilter"/>
     <!--敏感词过滤器-->
     <!--<bean id="sensitiveWordsFilter" class="com.nealma.account.shiro.security.SensitiveWordsFilter"/>-->
     <!--日志拦截器-->
@@ -81,8 +83,8 @@
 
     <!--自定义Realm 继承自AuthorizingRealm -->
     <bean id="monitorRealm" class="com.nealma.account.shiro.realm.ShiroDaoRealm">
-        <property name="cachingEnabled" value="true"/>
-        <property name="authenticationCachingEnabled" value="true"/>
+        <property name="cachingEnabled" value="false"/>
+        <property name="authenticationCachingEnabled" value="false"/>
         <property name="authenticationCacheName" value="authenticationCache"/>
     </bean>
 
