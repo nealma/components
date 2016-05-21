@@ -37,6 +37,10 @@
     </plugins>
     <mappers>
         <mapper resource="account-mapper/UserMapper.xml" />
+        <mapper resource="account-mapper/RoleMapper.xml" />
+        <mapper resource="account-mapper/ResourceMapper.xml" />
+        <mapper resource="account-mapper/UserRoleLinkMapper.xml" />
+        <mapper resource="account-mapper/RoleResourceLinkMapper.xml" />
     </mappers>
 
 </configuration>

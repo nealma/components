@@ -1,7 +1,7 @@
 package com.nealma.account.dao;
 
 import com.nealma.framework.dao.BaseDao;
-import com.nealma.framework.domain.User;
+import com.nealma.framework.model.User;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.datasource.DataSourceException;
 import org.springframework.stereotype.Repository;

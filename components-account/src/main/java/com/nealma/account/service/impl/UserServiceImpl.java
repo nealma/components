@@ -2,7 +2,7 @@ package com.nealma.account.service.impl;
 
 import com.nealma.account.dao.UserDao;
 import com.nealma.account.service.UserService;
-import com.nealma.framework.domain.User;
+import com.nealma.framework.model.User;
 import org.apache.ibatis.datasource.DataSourceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

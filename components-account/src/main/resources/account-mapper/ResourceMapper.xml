@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nealma.account.dao.ResourceDao">
+
+    <!--  ################### insert ################### -->
+    <insert id="insert" parameterType="com.nealma.framework.model.Resource">
+        insert into t_resource (<include refid="sql_columns"/>)
+        values (<include refid="sql_values"/>)
+    </insert>
+
+    <!--  ################### update ################### -->
+    <update id="update" parameterType="com.nealma.framework.model.Resource">
+        update t_resource
+        <include refid="sql_set"/>
+        where id = #{id}
+    </update>
+
+    <!--  ################### fetch ################### -->
+    <select id="fetch" parameterType="long" resultMap="resourceMap">
+        select * from t_resource where id = #{id}
+    </select>
+
+    <!--  ################### fetchByIds ################### -->
+    <select id="fetchByIds" resultMap="resourceMap">
+        select * from t_resource
+        <where>
+            <foreach collection="list" item="item" index="index" open=" (" separator="or" close=") ">
+                id = #{item.resourceId}
+            </foreach>
+        </where>
+    </select>
+
+    <!--  ################### list ################### -->
+    <select id="list" resultMap="resourceMap">
+        select * from t_resource limit 10;
+    </select>
+
+    <!--  ################### result map ################### -->
+    <resultMap id="resourceMap" type="com.nealma.framework.model.Resource">
+        <result column="name" property="name"/>
+        <result column="permission" property="permission"/>
+        <result column="url" property="url"/>
+        <result column="last_edit_time" property="lastEditTime"/>
+        <result column="create_time" property="createTime"/>
+        <result column="row_status" property="rowStatus"/>
+    </resultMap>
+
+    <!--  ################### dynamic ################### -->
+    <sql id="sql_set">
+        set
+        <include refid="sql_columns_values"/>
+    </sql>
+
+    <sql id="sql_columns">
+        <trim suffixOverrides=",">
+            <if test="name != null">`name`,</if>
+            <if test="permission != null">`permission`,</if>
+            <if test="url != null">`url`,</if>
+            <if test="lastEditTime != null">last_edit_time,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="rowStatus != null">row_status</if>
+        </trim>
+    </sql>
+
+    <sql id="sql_columns_values">
+        <trim suffixOverrides=",">
+            <if test="name != null">name=#{name},</if>
+            <if test="permission != null">permission=#{permission},</if>
+            <if test="url != null">url=#{url},</if>
+            <if test="lastEditTime != null">last_edit_time=#{lastEditTime},</if>
+            <if test="createTime != null">create_time=#{createTime},</if>
+            <if test="rowStatus != null">row_status=#{rowStatus}</if>
+        </trim>
+    </sql>
+
+    <sql id="sql_values">
+        <trim suffixOverrides=",">
+            <if test="name != null">#{name},</if>
+            <if test="permission != null">#{permission},</if>
+            <if test="url != null">#{url},</if>
+            <if test="lastEditTime != null">#{lastEditTime},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="rowStatus != null">#{rowStatus}</if>
+        </trim>
+    </sql>
+</mapper>

@@ -12,10 +12,10 @@
 
     <!-- 加载数据库属性配置文件 -->
     <context:property-placeholder location="classpath:rest-config.properties" />
-    <tx:annotation-driven transaction-manager="rest-transactionManager"/>
-    <!-- 自动扫描，多个包以 逗号分隔 -->
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+    <!-- 自动扫描，多个包以[,]分隔 -->
     <context:component-scan base-package="com.nealma.account, com.nealma.framework"/>
-    <aop:aspectj-autoproxy/>
+    <aop:aspectj-autoproxy proxy-target-class="true"/>
 
     <!-- 数据源部分 -->
     <bean id="parentDataSource" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close"
@@ -32,30 +32,30 @@
           p:validationQuery="SELECT 1"
           p:filters="stat"/>
 
-    <!-- news 数据库 -->
-    <bean id="newsDataSource" parent="parentDataSource"
-          p:username="${jdbc.mysql.news.username}"
-          p:password="${jdbc.mysql.news.password}"
-          p:url="${jdbc.mysql.news.url}"/>
+    <!-- read 数据库 -->
+    <bean id="readDataSource" parent="parentDataSource"
+          p:username="${jdbc.mysql.read.username}"
+          p:password="${jdbc.mysql.read.password}"
+          p:url="${jdbc.mysql.read.url}"/>
 
-    <!-- pay 数据库 -->
-     <bean id="payDataSource" parent="parentDataSource"
-          p:username="${jdbc.mysql.pay.username}"
-          p:password="${jdbc.mysql.pay.password}"
-          p:url="${jdbc.mysql.pay.url}"/>
+    <!-- write 数据库 -->
+     <bean id="writeDataSource" parent="parentDataSource"
+          p:username="${jdbc.mysql.write.username}"
+          p:password="${jdbc.mysql.write.password}"
+          p:url="${jdbc.mysql.write.url}"/>
 
-    <bean id="rest-dataSource" class="com.nealma.framework.datasource.DynamicDataSource">
+    <bean id="dataSource" class="com.nealma.framework.datasource.DynamicDataSource">
         <property name="targetDataSources">
             <map key-type="java.lang.String">
-                <entry value-ref="newsDataSource" key="news"></entry>
-                <entry value-ref="payDataSource" key="pay"></entry>
+                <entry value-ref="readDataSource" key="read"></entry>
+                <entry value-ref="writeDataSource" key="write"></entry>
             </map>
         </property>
-        <property name="defaultTargetDataSource" ref="newsDataSource" />
+        <property name="defaultTargetDataSource" ref="readDataSource" />
     </bean>
 
-    <bean id="rest-sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-        <property name="dataSource" ref="rest-dataSource"/>
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
         <property name="configLocation" value="classpath:rest-mybatis-mapper-config.xml"/>
     </bean>
 
@@ -63,14 +63,14 @@
         <property name="basePackage" value="com.nealma.account.dao"/>
     </bean>
 
-    <bean id="rest-transactionManager"
+    <bean id="transactionManager"
           class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-        <property name="dataSource" ref="rest-dataSource"/>
+        <property name="dataSource" ref="dataSource"/>
     </bean>
 
     <bean id="exchangeDataSource" class="com.nealma.framework.aspect.ChangeToMethodBeforeAdvice" />
 
-    <tx:advice id="rest-txAdvice" transaction-manager="rest-transactionManager">
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
         <tx:attributes>
             <tx:method name="insert*" isolation="DEFAULT" propagation="REQUIRED" rollback-for="Exception"/>
             <tx:method name="update*" isolation="DEFAULT" propagation="REQUIRED" rollback-for="Exception"/>
@@ -82,7 +82,7 @@
 
     <aop:config>
         <aop:pointcut id="service" expression="execution (* com.nealma.account.service.*.*(..))"/>
-        <aop:advisor advice-ref="rest-txAdvice" pointcut-ref="service" order="2"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="service" order="2"/>
         <aop:advisor advice-ref="exchangeDataSource" pointcut-ref="service" order="1"/>
     </aop:config>
 

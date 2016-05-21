@@ -1,6 +1,6 @@
 package com.nealma.account.service;
 
-import com.nealma.framework.domain.User;
+import com.nealma.framework.model.User;
 import com.nealma.framework.service.BaseService;
 import org.apache.ibatis.datasource.DataSourceException;
 

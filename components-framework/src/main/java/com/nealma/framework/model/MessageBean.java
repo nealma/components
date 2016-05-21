@@ -1,4 +1,4 @@
-package com.nealma.framework.domain;
+package com.nealma.framework.model;
 
 import java.util.List;
 

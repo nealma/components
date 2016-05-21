@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+    http://www.springframework.org/schema/util
+    http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+    <description>Shiro 配置</description>
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+        <property name="securityManager" ref="securityManager" />
+        <property name="loginUrl" value="/login.do" />
+        <property name="successUrl" value="/main.do" />
+
+        <property name="filters">
+            <util:map>
+                <entry key="authc" value-ref="authcFilter"/>
+                <entry key="logout" value-ref="logoutFilter" />
+                <entry key="sensitiveWords" value-ref="sensitiveWordsFilter" />
+                <!--<entry key="syslog" value-ref="syslogFilter" />-->
+            </util:map>
+        </property>
+
+        <property name="filterChainDefinitions">
+            <value>
+                /login.jsp = anon
+                /login.do = authc
+                /logout.do = logout
+                /*.do=authc,sensitiveWords
+                <!--/*.do = syslog-->
+            </value>
+        </property>
+    </bean>
+    <!--访问时必须认证过滤器-->
+    <bean id="authcFilter"  class="com.nealma.account.shiro.filter.MyAuthenticationFilter"/>
+    <!--退出登录过滤器-->
+    <bean id="logoutFilter" class="com.nealma.account.shiro.filter.LogOutFilter"/>
+    <!--敏感词过滤器-->
+    <bean id="sensitiveWordsFilter" class="com.nealma.account.shiro.security.SensitiveWordsFilter"/>
+    <!--日志拦截器-->
+    <!--
+    <bean id="syslogFilter" class="com.shiro.filter.SysLogFilter"/>
+    -->
+    <!-- 会话ID生成器 -->
+    <bean id="sessionIdGenerator" class="org.apache.shiro.session.mgt.eis.JavaUuidSessionIdGenerator"/>
+
+
+    <!-- 会话DAO -->
+    <bean id="sessionDAO" class="org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO">
+        <property name="activeSessionsCacheName" value="shiro-activeSessionCache"/>
+        <property name="sessionIdGenerator" ref="sessionIdGenerator"/>
+    </bean>
+
+    <!-- 会话管理器 -->
+    <bean id="sessionManager" class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
+        <property name="globalSessionTimeout" value="600000"/>
+        <property name="deleteInvalidSessions" value="true"/>
+        <property name="sessionValidationSchedulerEnabled" value="true"/>
+        <property name="sessionValidationScheduler" ref="sessionValidationScheduler"/>
+        <property name="sessionDAO" ref="sessionDAO"/>
+    </bean>
+
+
+    <!-- 会话验证调度器 -->
+    <bean id="sessionValidationScheduler" class="org.apache.shiro.session.mgt.quartz.QuartzSessionValidationScheduler">
+        <property name="sessionValidationInterval" value="1800000"/>
+        <property name="sessionManager" ref="sessionManager"/>
+    </bean>
+
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+        <!--设置自定义realm -->
+        <property name="realm" ref="monitorRealm" />
+        <property name="sessionManager" ref="sessionManager"/>
+        <property name="cacheManager" ref="shiroEhcacheManager"/>
+    </bean>
+
+    <bean id="shiroEhcacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
+        <property name="cacheManagerConfigFile">
+            <value>classpath:rest-ehcache.xml</value>
+        </property>
+    </bean>
+
+    <!--自定义Realm 继承自AuthorizingRealm -->
+    <bean id="monitorRealm" class="com.nealma.account.shiro.realm.ShiroDaoRealm">
+        <property name="cachingEnabled" value="true"/>
+        <property name="authenticationCachingEnabled" value="true"/>
+        <property name="authenticationCacheName" value="authenticationCache"/>
+    </bean>
+
+    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="staticMethod" value="org.apache.shiro.SecurityUtils.setSecurityManager" />
+        <property name="arguments" ref="securityManager" />
+    </bean>
+
+    <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor" />
+
+    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" depends-on="lifecycleBeanPostProcessor" >
+        <property name="proxyTargetClass" value="true"/>
+    </bean>
+
+    <bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+        <property name="securityManager" ref="securityManager" />
+    </bean>
+</beans>

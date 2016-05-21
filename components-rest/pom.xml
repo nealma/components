@@ -15,6 +15,12 @@
             <artifactId>components-account</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
+        <!-- servlet api -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
     <build>
         <resources>
@@ -98,13 +104,13 @@
             </build>
         </profile>
         <profile>
-            <id>audit</id>
+            <id>test</id>
             <properties>
-                <project.classifier>audit</project.classifier>
+                <project.classifier>test</project.classifier>
             </properties>
             <build>
                 <filters>
-                    <filter>config-audit.properties</filter>
+                    <filter>config-test.properties</filter>
                 </filters>
             </build>
         </profile>

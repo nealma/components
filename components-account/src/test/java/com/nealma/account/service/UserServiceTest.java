@@ -1,6 +1,7 @@
 package com.nealma.account.service;
 
-import com.nealma.framework.domain.User;
+import com.nealma.framework.commons.StringUtil;
+import com.nealma.framework.model.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -10,7 +11,6 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -72,7 +72,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void stringEmptyTest(){
-        StringUtils.isEmpty("");
+    public void stringEmptyTest() {
+        StringUtil.isEmpty("");
     }
 }

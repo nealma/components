@@ -3,6 +3,10 @@
          xmlns="http://java.sun.com/xml/ns/javaee"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
          id="WebApp_ID" version="3.0">
+    <display-name>common construct</display-name>
+    <welcome-file-list>
+        <welcome-file>/WEB-INF/view/login.jsp</welcome-file>
+    </welcome-file-list>
 
     <!-- Session Configuration -->
     <session-config>
@@ -12,48 +16,102 @@
 
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>classpath:rest-spring.xml</param-value>
+        <param-value>classpath:rest-spring.xml,classpath:rest-spring-shiro.xml</param-value>
     </context-param>
-
-    <listener>
-        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-    </listener>
-
+    <!-- apache shiro权限 -->
     <filter>
-        <filter-name>SetCharacterEncoding</filter-name>
-        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+        <filter-name>shiroFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
         <init-param>
-            <param-name>encoding</param-name>
-            <param-value>UTF-8</param-value>
-        </init-param>
-        <init-param>
-            <param-name>forceEncoding</param-name>
+            <param-name>targetFilterLifecycle</param-name>
             <param-value>true</param-value>
         </init-param>
     </filter>
     <filter-mapping>
-        <filter-name>SetCharacterEncoding</filter-name>
-        <url-pattern>/*</url-pattern>
+        <filter-name>shiroFilter</filter-name>
+        <url-pattern>*.do</url-pattern>
     </filter-mapping>
+    <filter>
+        <description>字符集过滤器</description>
+        <filter-name>encodingFilter</filter-name>
+        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+        <init-param>
+            <description>字符集编码</description>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>encodingFilter</filter-name>
+        <url-pattern>*</url-pattern>
+    </filter-mapping>
+
+
+    <!--&lt;!&ndash;安全过滤&ndash;&gt;-->
+    <!--&lt;!&ndash; 防止SQL注入和XSS攻击Filter&ndash;&gt;-->
+    <!--<filter>-->
+        <!--<filter-name>XssFilter</filter-name>-->
+        <!--<filter-class>com.shiro.security.XssFilter</filter-class>-->
+        <!--<init-param>-->
+            <!--<param-name>excludeUrls</param-name> &lt;!&ndash;不进行过滤的url&ndash;&gt;-->
+            <!--<param-value></param-value>&lt;!&ndash;不需要过滤的路径之间用@符号隔开 &ndash;&gt;-->
+        <!--</init-param>-->
+        <!--<init-param>-->
+            <!--<param-name>SplitChar</param-name>&lt;!&ndash; 分隔字符串 &ndash;&gt;-->
+            <!--<param-value>@</param-value>-->
+        <!--</init-param>-->
+        <!--<init-param>-->
+            <!--<param-name>FilterChar</param-name>&lt;!&ndash;需要过滤的特殊字符&ndash;&gt;-->
+            <!--<param-value>'@"@\@#@:@%@></param-value>-->
+        <!--</init-param>-->
+        <!--<init-param>-->
+            <!--<param-name>ReplaceChar</param-name>&lt;!&ndash;用于替换FilterChar的字符&ndash;&gt;-->
+            <!--<param-value>‘@“@＼@＃@：@％@＞</param-value>-->
+        <!--</init-param>-->
+    <!--</filter>-->
+    <!--<filter-mapping>-->
+        <!--<filter-name>XssFilter</filter-name>-->
+        <!--<url-pattern>*.do</url-pattern>-->
+        <!--<dispatcher>REQUEST</dispatcher>-->
+    <!--</filter-mapping>-->
+
+    <!--&lt;!&ndash;对请求的链接中的参数进行过滤Filter&ndash;&gt;-->
+    <!--<filter>-->
+        <!--<filter-name>ParameterFilter</filter-name>-->
+        <!--<filter-class>com.shiro.security.ParameterFilter</filter-class>-->
+        <!--<init-param>-->
+            <!--<param-name>excludeUrls</param-name>&lt;!&ndash; 不进行过滤的url&ndash;&gt;-->
+            <!--<param-value></param-value>&lt;!&ndash;不需要过滤的路径之间用@符号隔开 &ndash;&gt;-->
+        <!--</init-param>-->
+        <!--<init-param>-->
+            <!--<param-name>IllegalChar</param-name>-->
+            <!--<param-value>script@sql</param-value>-->
+        <!--</init-param>-->
+    <!--</filter>-->
+    <!--<filter-mapping>-->
+        <!--<filter-name>ParameterFilter</filter-name>-->
+        <!--<url-pattern>*.do</url-pattern>-->
+    <!--</filter-mapping>-->
+
+
+    <listener>
+        <description>spring监听器</description>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
     <servlet>
-        <servlet-name>rest</servlet-name>
+        <description>spring mvc servlet</description>
+        <servlet-name>springMvc</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
         <init-param>
+            <description>spring mvc 配置文件</description>
             <param-name>contextConfigLocation</param-name>
-            <param-value>classpath:rest-spring-servlet.xml</param-value>
+            <param-value>classpath:rest-spring-mvc.xml</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet-mapping>
-        <servlet-name>rest</servlet-name>
+        <servlet-name>springMvc</servlet-name>
         <url-pattern>/</url-pattern>
     </servlet-mapping>
-    <!--<filter>-->
-        <!--<filter-name>requestContextFilter</filter-name>-->
-        <!--<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>-->
-    <!--</filter>-->
-    <!--<filter-mapping>-->
-        <!--<filter-name>requestContextFilter</filter-name>-->
-        <!--<url-pattern>/*</url-pattern>-->
-    <!--</filter-mapping>-->
 </web-app>

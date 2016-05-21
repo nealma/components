@@ -3,13 +3,13 @@
 <mapper namespace="com.nealma.account.dao.UserDao">
 
     <!--  ################### insert ################### -->
-    <insert id="insert" parameterType="com.nealma.framework.domain.User">
+    <insert id="insert" parameterType="com.nealma.framework.model.User">
         insert into t_user (<include refid="sql_columns"/>)
         values (<include refid="sql_values"/>)
     </insert>
 
     <!--  ################### update ################### -->
-    <update id="update" parameterType="com.nealma.framework.domain.User">
+    <update id="update" parameterType="com.nealma.framework.model.User">
         update t_user
         <include refid="sql_set"/>
         where id = #{id}
@@ -31,7 +31,7 @@
     </select>
 
     <!--  ################### result map ################### -->
-    <resultMap id="userMap" type="com.nealma.framework.domain.User">
+    <resultMap id="userMap" type="com.nealma.framework.model.User">
         <result column="username" property="username"/>
         <result column="password" property="password"/>
         <result column="salt" property="salt"/>
