@@ -16,7 +16,7 @@
             <util:map>
                 <entry key="authc" value-ref="authcFilter"/>
                 <entry key="logout" value-ref="logoutFilter" />
-                <entry key="sensitiveWords" value-ref="sensitiveWordsFilter" />
+                <!--<entry key="sensitiveWords" value-ref="sensitiveWordsFilter" />-->
                 <!--<entry key="syslog" value-ref="syslogFilter" />-->
             </util:map>
         </property>
@@ -26,7 +26,8 @@
                 /login.jsp = anon
                 /login.do = authc
                 /logout.do = logout
-                /*.do=authc,sensitiveWords
+                /*.do=authc
+                <!--/*.do=authc,sensitiveWords-->
                 <!--/*.do = syslog-->
             </value>
         </property>
@@ -36,7 +37,7 @@
     <!--退出登录过滤器-->
     <bean id="logoutFilter" class="com.nealma.account.shiro.filter.LogOutFilter"/>
     <!--敏感词过滤器-->
-    <bean id="sensitiveWordsFilter" class="com.nealma.account.shiro.security.SensitiveWordsFilter"/>
+    <!--<bean id="sensitiveWordsFilter" class="com.nealma.account.shiro.security.SensitiveWordsFilter"/>-->
     <!--日志拦截器-->
     <!--
     <bean id="syslogFilter" class="com.shiro.filter.SysLogFilter"/>
@@ -47,7 +48,7 @@
 
     <!-- 会话DAO -->
     <bean id="sessionDAO" class="org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO">
-        <property name="activeSessionsCacheName" value="shiro-activeSessionCache"/>
+        <!--<property name="activeSessionsCacheName" value="shiro-activeSessionCache"/>-->
         <property name="sessionIdGenerator" ref="sessionIdGenerator"/>
     </bean>
 
@@ -75,9 +76,7 @@
     </bean>
 
     <bean id="shiroEhcacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
-        <property name="cacheManagerConfigFile">
-            <value>classpath:rest-ehcache.xml</value>
-        </property>
+        <property name="cacheManagerConfigFile" value="classpath:rest-ehcache.xml"/>
     </bean>
 
     <!--自定义Realm 继承自AuthorizingRealm -->

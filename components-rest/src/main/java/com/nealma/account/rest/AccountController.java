@@ -4,6 +4,7 @@ import com.nealma.framework.model.MessageBean;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * Created by nealpc on 5/18/16.
@@ -18,4 +19,5 @@ public class AccountController {
         messageBean.setMessage("success");
         return messageBean;
     }
+
 }

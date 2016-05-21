@@ -29,9 +29,6 @@ public class ShiroDaoRealm extends AuthorizingRealm {
     public static final Logger LOGGER = LoggerFactory.getLogger(ShiroDaoRealm.class);
 
     @Autowired
-    UserService userService;
-
-    @Autowired
     ManagerService managerService;
     /**
      * 授权
@@ -80,13 +77,14 @@ public class ShiroDaoRealm extends AuthorizingRealm {
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken)
             throws AuthenticationException {
+        LOGGER.info(">>>>>>>>>>>>>>>> execute doGetAuthenticationInfo <<<<<<<<<<<<<<<<<<<<<<<<<<<");
         UsernamePasswordToken usernamePasswordToken = (UsernamePasswordToken) authenticationToken;
         String username = usernamePasswordToken.getUsername();
         try {
             if(username == null){
                 throw new AccountException("username can not be null.");
             }
-            User user = userService.fetchByUsername(username);
+            User user = managerService.fetchByUsername(username);
             if(user == null) {
                 throw new UnknownAccountException("username not exists.");
             }
