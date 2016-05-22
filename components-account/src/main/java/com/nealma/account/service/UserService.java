@@ -10,4 +10,5 @@ import org.apache.ibatis.datasource.DataSourceException;
 public interface UserService extends BaseService<User> {
 
     public User fetchByUsername(String username) throws DataSourceException;
+
 }

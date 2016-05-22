@@ -6,13 +6,14 @@ import java.util.List;
 
 /**
  * Created by neal.ma on 5/14/16.
+ *
  * @param <T>
  */
 public interface BaseDao<T> {
 
     public Long insert(T t) throws DataSourceException;
 
-    public void update(T t) throws DataSourceException;
+    public Integer update(T t) throws DataSourceException;
 
     public T fetch(long id) throws DataSourceException;
 

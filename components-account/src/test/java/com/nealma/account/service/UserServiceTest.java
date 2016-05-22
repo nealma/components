@@ -74,8 +74,8 @@ public class UserServiceTest {
 
     @Test
     public void stringEmptyTest() {
-        int random =  ThreadLocalRandom.current().nextInt();
         StringUtil.isEmpty("");
-        LOGGER.debug("random=", random);
+        LOGGER.debug("random=", ThreadLocalRandom.current().nextInt(10));
+//        LOGGER.debug();
     }
 }

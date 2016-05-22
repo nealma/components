@@ -8,5 +8,7 @@ import org.apache.ibatis.datasource.DataSourceException;
  */
 public interface ManagerService {
 
+    public User insertForRegister(String username, String password) throws DataSourceException;
+
     public User fetchByUsername(String username) throws DataSourceException;
 }

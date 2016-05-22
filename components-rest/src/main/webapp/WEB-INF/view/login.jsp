@@ -39,6 +39,7 @@ A img{border: none;}
 						验证码：<input type=text id=j_checkcode name=j_checkcode maxlength=4 style="width:85px;height:17px;"/>&nbsp;<a href="" onClick="document.getElementById('CheckPic').src='<%=request.getContextPath()%>/verifycode?a='+Math.random()"><img  id="CheckPic" src="<%=request.getContextPath()%>/verifycode" style="vertical-align:middle"/></a><br/>--%><br/>
 						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input name="submit" type="submit"  value="登录" /> &nbsp;&nbsp;
 						&nbsp;&nbsp;<input type="reset" name="reset" value="重置"/>
+                        &nbsp;&nbsp;<a href="/register.do">还没有账号？去注册</a>
 					</form>
 				</div>
 			 </div>  

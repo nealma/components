@@ -32,28 +32,26 @@
           p:validationQuery="SELECT 1"
           p:filters="stat"/>
 
-    <!-- news 数据库 -->
-    <bean id="newsDataSource" parent="parentDataSource"
-          p:username="${jdbc.mysql.news.username}"
-          p:password="${jdbc.mysql.news.password}"
-          p:url="${jdbc.mysql.news.url}"/>
+    <!-- read 数据库 -->
+    <bean id="readDataSource" parent="parentDataSource"
+          p:username="${jdbc.mysql.read.username}"
+          p:password="${jdbc.mysql.read.password}"
+          p:url="${jdbc.mysql.read.url}"/>
 
-    <!-- pay 数据库 -->
-     <bean id="payDataSource" parent="parentDataSource"
-          p:username="${jdbc.mysql.pay.username}"
-          p:password="${jdbc.mysql.pay.password}"
-          p:url="${jdbc.mysql.pay.url}"/>
+    <!-- write 数据库 -->
+    <bean id="writeDataSource" parent="parentDataSource"
+          p:username="${jdbc.mysql.write.username}"
+          p:password="${jdbc.mysql.write.password}"
+          p:url="${jdbc.mysql.write.url}"/>
 
     <bean id="account-dataSource" class="com.nealma.framework.datasource.DynamicDataSource">
         <property name="targetDataSources">
             <map key-type="java.lang.String">
-                <entry value-ref="newsDataSource" key="news"></entry>
-                <entry value-ref="payDataSource" key="pay"></entry>
+                <entry value-ref="readDataSource" key="read"></entry>
+                <entry value-ref="writeDataSource" key="write"></entry>
             </map>
         </property>
-        <property name="defaultTargetDataSource"
-        ref="newsDataSource">
-        </property>
+        <property name="defaultTargetDataSource" ref="readDataSource" />
     </bean>
 
     <bean id="account-sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">

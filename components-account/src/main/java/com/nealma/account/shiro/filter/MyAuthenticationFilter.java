@@ -1,7 +1,10 @@
 package com.nealma.account.shiro.filter;
 
 import com.nealma.account.service.ManagerService;
+import com.nealma.framework.commons.StringUtil;
 import com.nealma.framework.model.User;
+import org.apache.ibatis.datasource.DataSourceException;
+import org.apache.shiro.authc.AccountException;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
@@ -37,7 +40,6 @@ public class MyAuthenticationFilter extends FormAuthenticationFilter {
             throw new IllegalStateException(msg);
         }
         Subject subject = getSubject(request, response);
-        LOGGER.info("username={}, password={}", token.getPrincipal(), token.getCredentials());
         try{
             subject.login(token);
         }catch (AuthenticationException e) {

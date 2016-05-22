@@ -25,9 +25,9 @@
             <value>
                 /login.jsp = anon
                 /register.jsp = anon
+                /register.do = anon
                 /login.do = authc
                 /logout.do = logout
-                /register.do = anon
                 /*.do=authc
                 <!--/*.do=authc,sensitiveWords-->
                 <!--/*.do = syslog-->
@@ -50,7 +50,7 @@
 
     <!-- 会话DAO -->
     <bean id="sessionDAO" class="org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO">
-        <!--<property name="activeSessionsCacheName" value="shiro-activeSessionCache"/>-->
+        <property name="activeSessionsCacheName" value="shiro-activeSessionCache"/>
         <property name="sessionIdGenerator" ref="sessionIdGenerator"/>
     </bean>
 
@@ -78,13 +78,13 @@
     </bean>
 
     <bean id="shiroEhcacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
-        <property name="cacheManagerConfigFile" value="classpath:rest-ehcache.xml"/>
+        <property name="cacheManagerConfigFile" value="classpath:rest-shiro-ehcache.xml"/>
     </bean>
 
     <!--自定义Realm 继承自AuthorizingRealm -->
     <bean id="monitorRealm" class="com.nealma.account.shiro.realm.ShiroDaoRealm">
-        <property name="cachingEnabled" value="false"/>
-        <property name="authenticationCachingEnabled" value="false"/>
+        <property name="cachingEnabled" value="true"/>
+        <property name="authenticationCachingEnabled" value="true"/>
         <property name="authenticationCacheName" value="authenticationCache"/>
     </bean>
 

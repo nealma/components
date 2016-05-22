@@ -1,11 +1,16 @@
 package com.nealma.account.rest;
 
-import org.apache.shiro.authc.credential.DefaultPasswordService;
-import org.apache.shiro.authc.credential.PasswordService;
+import com.nealma.account.service.ManagerService;
+import com.nealma.framework.commons.Constants;
+import com.nealma.framework.commons.StringUtil;
+import org.apache.ibatis.datasource.DataSourceException;
+import org.apache.shiro.authc.AccountException;
+import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.crypto.hash.Sha512Hash;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,8 +18,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import java.util.concurrent.ThreadLocalRandom;
 
 import static org.apache.shiro.web.filter.authc.FormAuthenticationFilter.DEFAULT_ERROR_KEY_ATTRIBUTE_NAME;
 
@@ -26,48 +29,58 @@ public class LoginController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LoginController.class);
 
+    @Autowired
+    private ManagerService managerService;
     /**
      * 用户登录
      */
     @RequestMapping(value = "/login.do", method = RequestMethod.GET)
-    public ModelAndView tologin(HttpServletRequest request,
+    public ModelAndView toLogin(HttpServletRequest request,
                                 HttpServletResponse response) {
         return new ModelAndView("view/login");
     }
-
     @RequestMapping(value = "/login.do", method = RequestMethod.POST)
     public ModelAndView login(String username, String password, String captcha,
                               HttpServletRequest request,
                               HttpServletResponse response, ModelAndView model) {
         Object error = request.getAttribute(DEFAULT_ERROR_KEY_ATTRIBUTE_NAME);
-        LOGGER.info("username={}, password={}, captcha={}, error={}", username, password, captcha, error);
+
+        LOGGER.info("username={}, password={}, error={}", username, password, error);
         if (error != null) {
             model.addObject("message", "用户名/密码不匹配！");
         }
         model.setViewName("view/login");
         return model;
     }
-
     @RequestMapping(value = "/register.do", method = RequestMethod.GET)
-    public ModelAndView toregister(HttpServletRequest request,
-                                   HttpServletResponse response) {
+    public ModelAndView toRegister(HttpServletRequest request,
+                                HttpServletResponse response) {
         return new ModelAndView("view/register");
     }
-
     @RequestMapping(value = "/register.do", method = RequestMethod.POST)
     public ModelAndView register(String username, String password, String captcha,
                                  HttpServletRequest request,
                                  HttpServletResponse response, ModelAndView model) {
         Object error = request.getAttribute(DEFAULT_ERROR_KEY_ATTRIBUTE_NAME);
 
-        PasswordService passwordService = new DefaultPasswordService();
-        String encrypted = passwordService.encryptPassword(password);
-        String encrypted1 = new Sha512Hash(password, username, ThreadLocalRandom.current().nextInt()).toHex();
-        LOGGER.info("username={}, password={}, encrypted={}, error={}", username, password, encrypted1, error);
-        if (error != null) {
-            model.addObject("message", "用户名/密码不匹配！");
+        LOGGER.info("username={}, password={}, error={}", username, password, error);
+        model.addObject("message", "请重新登录你的账号！");
+        model.setViewName("view/login");
+
+        if(StringUtil.isEmpty(username) ||  StringUtil.isEmpty(username)){
+            model.addObject("message", "用户名或密码为空！");
+            model.setViewName("view/register");
+            return model;
         }
-        model.setViewName("view/register");
+        try{
+            managerService.insertForRegister(username, password);
+        }catch (IllegalArgumentException e) {
+            model.addObject("message", "用户名或密码为空！");
+            model.setViewName("view/register");
+        }catch (DataSourceException e) {
+            model.addObject("message", "用户名已经被使用！");
+            model.setViewName("view/register");
+        }
         return model;
     }
 
