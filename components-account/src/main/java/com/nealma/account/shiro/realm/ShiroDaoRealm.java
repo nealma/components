@@ -12,10 +12,14 @@ import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.util.ByteSource;
+import org.apache.shiro.util.SimpleByteSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -71,37 +75,43 @@ public class ShiroDaoRealm extends AuthorizingRealm {
     /**
      * 认证
      *
-     * @param authenticationToken
+     * @param token
      * @return
      * @throws org.apache.shiro.authc.AuthenticationException
      */
     @Override
-    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken)
+    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token)
             throws AuthenticationException {
-        UsernamePasswordToken usernamePasswordToken = (UsernamePasswordToken) authenticationToken;
-        String username = usernamePasswordToken.getUsername();
-        if(username == null){
-            throw new AccountException("username can not be null.");
-        }
-        User user = managerService.fetchByUsername(username);
-        if(user == null) {
-            throw new UnknownAccountException("username not exists.");
-        }
 
+        LOGGER.debug("--------doGetAuthenticationInfo---------");
+        String username = (String) token.getPrincipal();
+        // 调用ManagerService查询是否有此用户
+        User user = managerService.fetchByUsername(username);
+        if (user == null) {
+            // 抛出 帐号找不到异常
+            throw new UnknownAccountException();
+        }
+        // 判断帐号是否锁定
+//        if (Boolean.TRUE.equals(user.getLocked())) {
+//            // 抛出 帐号锁定异常
+//            throw new LockedAccountException();
+//        }
+
+//        user.setPassword(password);
+
+        LOGGER.info("username={}, password={}, credential={}, salt={}", token.getPrincipal(), user.getPassword(), token.getCredentials(), user.getSalt());
         /*查找到的用户与Token里面的用户进行比较  匹配则登陆成功，不匹配则登陆失败*/
-        return new SimpleAuthenticationInfo(user.getUsername(),
+        return new SimpleAuthenticationInfo(
+                user.getUsername(),
                 user.getPassword(),
+                new SerializableByteSource(user.getCredentialSalt().getBytes()),
+//                ByteSource.Util.bytes(user.getCredentialSalt()),
                 getName()
         );
     }
 
-    @Override
-    protected void clearCachedAuthorizationInfo(PrincipalCollection arg0) {
-        super.clearCachedAuthorizationInfo(arg0);
-    }
-
     /**
-     * 退出登录即点击logout时清除登陆的所有信息*
+     * 退出登录即点击logout时清除登陆的所有信息
      * @param principals
      */
     @Override
@@ -109,5 +119,26 @@ public class ShiroDaoRealm extends AuthorizingRealm {
         Object principal = principals.getPrimaryPrincipal();
         getCacheManager().getCache(principal.toString());
         super.doClearCache(principals);
+    }
+
+    @Override
+    public void clearCachedAuthorizationInfo(PrincipalCollection principals) {
+        super.clearCachedAuthorizationInfo(principals);
+    }
+
+    @Override
+    public void clearCachedAuthenticationInfo(PrincipalCollection principals) {
+        super.clearCachedAuthenticationInfo(principals);
+    }
+
+    @Override
+    public void clearCache(PrincipalCollection principals) {
+        super.clearCache(principals);
+    }
+
+    static class SerializableByteSource extends SimpleByteSource implements Serializable{
+        public SerializableByteSource(byte[] bytes) {
+            super(bytes);
+        }
     }
 }

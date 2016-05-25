@@ -4,10 +4,11 @@ import com.nealma.account.service.ManagerService;
 import com.nealma.framework.commons.Constants;
 import com.nealma.framework.commons.StringUtil;
 import org.apache.ibatis.datasource.DataSourceException;
-import org.apache.shiro.authc.AccountException;
-import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.crypto.hash.Sha512Hash;
+import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,13 +44,30 @@ public class LoginController {
     public ModelAndView login(String username, String password, String captcha,
                               HttpServletRequest request,
                               HttpServletResponse response, ModelAndView model) {
-        Object error = request.getAttribute(DEFAULT_ERROR_KEY_ATTRIBUTE_NAME);
+        model.setViewName("view/main");
+        Subject subject = SecurityUtils.getSubject();
+        UsernamePasswordToken token = new UsernamePasswordToken(username, password);
+        String error = null;
+        try {
+            subject.login(token);
+        } catch (UnknownAccountException e) {
+            error = "用户名/密码错误";
+        } catch (IncorrectCredentialsException e) {
+            error = "用户名/密码错误";
+        } catch (ExcessiveAttemptsException e) {
+            error = "登录失败多次，账户锁定10分钟";
+        } catch (AuthenticationException e) {
+            // 其他错误，比如锁定，如果想单独处理请单独catch处理
+            e.printStackTrace();
+            error = "其他错误：" + e.getMessage();
+        }
 
         LOGGER.info("username={}, password={}, error={}", username, password, error);
         if (error != null) {
-            model.addObject("message", "用户名/密码不匹配！");
+            model.addObject("message", error);
+            model.setViewName("view/login");
         }
-        model.setViewName("view/login");
+
         return model;
     }
     @RequestMapping(value = "/register.do", method = RequestMethod.GET)

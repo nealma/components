@@ -18,7 +18,8 @@
         <param-name>contextConfigLocation</param-name>
         <param-value>classpath:rest-spring.xml,classpath:rest-spring-shiro.xml</param-value>
     </context-param>
-    <!-- apache shiro权限 -->
+
+    <!-- SHIRO 过滤 -->
     <filter>
         <filter-name>shiroFilter</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>

@@ -17,7 +17,6 @@ public class User extends BaseModel{
     private List<Role> roles;
     private List<Resource> resources;
 
-
     public Long getId() {
         return id;
     }
@@ -92,5 +91,8 @@ public class User extends BaseModel{
         this.rowStatus = rowStatus;
     }
 
+    public String getCredentialSalt(){
+        return username + salt;
+    }
 }
 
