@@ -49,10 +49,10 @@
     <!-- Realm实现 -->
     <bean id="shiroDaoRealm" class="com.nealma.account.shiro.realm.ShiroDaoRealm">
         <property name="credentialsMatcher" ref="credentialsMatcher" />
-        <property name="cachingEnabled" value="true" />
-        <property name="authenticationCachingEnabled" value="true" />
+        <property name="cachingEnabled" value="false" />
+        <property name="authenticationCachingEnabled" value="false" />
         <property name="authenticationCacheName" value="authenticationCache" />
-        <property name="authorizationCachingEnabled" value="true" />
+        <property name="authorizationCachingEnabled" value="false" />
         <property name="authorizationCacheName" value="authorizationCache" />
     </bean>
 
@@ -72,13 +72,13 @@
     <!-- 生命周期处理器 -->
     <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor" />
 
-    <!--<bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" depends-on="lifecycleBeanPostProcessor" >-->
-        <!--<property name="proxyTargetClass" value="true"/>-->
-    <!--</bean>-->
-
-    <!--<bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">-->
-        <!--<property name="securityManager" ref="securityManager" />-->
-    <!--</bean>-->
+    <!-- 开启注解和鉴权-->
+    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" depends-on="lifecycleBeanPostProcessor" >
+        <property name="proxyTargetClass" value="true"/>
+    </bean>
+    <bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+        <property name="securityManager" ref="securityManager" />
+    </bean>
 
     <!-- Shiro的Web过滤器 -->
     <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
@@ -101,7 +101,6 @@
                 <!--/register.jsp = anon-->
                 <!--/register.do = anon-->
                 <!--/login.do = authc-->
-                <!--/logout.do = logout-->
                 <!--/*.do=authc-->
                 <!--&lt;!&ndash;/*.do=authc,sensitiveWords&ndash;&gt;-->
                 <!--&lt;!&ndash;/*.do = syslog&ndash;&gt;-->
@@ -111,7 +110,6 @@
     <!--访问时必须认证过滤器-->
     <!--<bean id="authcFilter"  class="com.nealma.account.shiro.filter.MyAuthenticationFilter"/>-->
     <!--退出登录过滤器-->
-    <bean id="logoutFilter" class="com.nealma.account.shiro.filter.MyLogoutFilter"/>
     <!--敏感词过滤器-->
     <!--<bean id="sensitiveWordsFilter" class="com.nealma.account.shiro.security.SensitiveWordsFilter"/>-->
     <!--日志拦截器-->

@@ -1,13 +1,12 @@
 package com.nealma.account.rest;
 
 import com.nealma.account.service.ManagerService;
-import com.nealma.framework.commons.Constants;
+import com.nealma.framework.annocation.SystemWebLayerLog;
 import com.nealma.framework.commons.StringUtil;
 import org.apache.ibatis.datasource.DataSourceException;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.apache.shiro.crypto.hash.Sha512Hash;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +31,7 @@ public class LoginController {
 
     @Autowired
     private ManagerService managerService;
+
     /**
      * 用户登录
      */
@@ -40,6 +40,7 @@ public class LoginController {
                                 HttpServletResponse response) {
         return new ModelAndView("view/login");
     }
+
     @RequestMapping(value = "/login.do", method = RequestMethod.POST)
     public ModelAndView login(String username, String password, String captcha,
                               HttpServletRequest request,
@@ -70,11 +71,13 @@ public class LoginController {
 
         return model;
     }
+
     @RequestMapping(value = "/register.do", method = RequestMethod.GET)
     public ModelAndView toRegister(HttpServletRequest request,
-                                HttpServletResponse response) {
+                                   HttpServletResponse response) {
         return new ModelAndView("view/register");
     }
+
     @RequestMapping(value = "/register.do", method = RequestMethod.POST)
     public ModelAndView register(String username, String password, String captcha,
                                  HttpServletRequest request,
@@ -85,17 +88,17 @@ public class LoginController {
         model.addObject("message", "请重新登录你的账号！");
         model.setViewName("view/login");
 
-        if(StringUtil.isEmpty(username) ||  StringUtil.isEmpty(username)){
+        if (StringUtil.isEmpty(username) || StringUtil.isEmpty(username)) {
             model.addObject("message", "用户名或密码为空！");
             model.setViewName("view/register");
             return model;
         }
-        try{
+        try {
             managerService.insertForRegister(username, password);
-        }catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             model.addObject("message", "用户名或密码为空！");
             model.setViewName("view/register");
-        }catch (DataSourceException e) {
+        } catch (DataSourceException e) {
             model.addObject("message", "用户名已经被使用！");
             model.setViewName("view/register");
         }
@@ -108,8 +111,21 @@ public class LoginController {
         return new ModelAndView("view/main");
     }
 
+    @RequestMapping("/logout.do")
+    public ModelAndView logout() {
+        LOGGER.info("action -> {}", "logout");
+        Subject subject = SecurityUtils.getSubject();
+        try {
+            subject.logout();
+        } catch (AuthenticationException ae) {
+            ae.printStackTrace();
+        }
+        return new ModelAndView("view/login");
+    }
+
     @RequestMapping("/userlist.do")
     @RequiresPermissions("user:view")
+    @SystemWebLayerLog(description = "用户列表")
     public ModelAndView userlist() {
         LOGGER.info("action -> {}", "userlist");
         return new ModelAndView("view/user/userlist");
@@ -117,6 +133,7 @@ public class LoginController {
 
     @RequestMapping("/rolelist.do")
     @RequiresPermissions("role:view")
+    @SystemWebLayerLog(description = "用户列表")
     public ModelAndView rolelist() {
         LOGGER.info("action -> {}", "rolelist");
         return new ModelAndView("view/role/rolelist");
@@ -124,6 +141,7 @@ public class LoginController {
 
     @RequestMapping("/permissionlist.do")
     @RequiresPermissions("permission:view")
+    @SystemWebLayerLog(description = "用户列表")
     public ModelAndView permissionlist() {
         LOGGER.info("action -> {}", "permissionlist");
         return new ModelAndView("view/permission/permissionlist");
@@ -131,6 +149,7 @@ public class LoginController {
 
     @RequestMapping("/loglist.do")
     @RequiresPermissions("log:view")
+    @SystemWebLayerLog(description = "用户列表")
     public ModelAndView loglist() {
         LOGGER.info("action -> {}", "loglist");
         return new ModelAndView("view/log/loglist");

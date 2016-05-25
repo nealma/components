@@ -1,5 +1,6 @@
 package com.nealma.account.shiro.filter;
 
+import com.nealma.framework.model.Log;
 import com.nealma.framework.model.User;
 import org.apache.shiro.web.filter.PathMatchingFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,14 +32,14 @@ public class SysLogFilter extends PathMatchingFilter {
         String type="0";
         //操作时间
         Date date=new Date();
-//        Log log=new Log();
-//        log.setUsername(user.getUsername());
-//        log.setIp(ip);
-//        log.setType(type);
-//        log.setMethod(method);
-//        log.setCreateDate(date);
+        Log log=new Log();
+        log.setUsername(user.getUsername());
+        log.setIp(ip);
+        log.setType(type);
+        log.setMethod(method);
+        log.setCreateDate(date);
 //        logService.addLog(log);
-//        System.out.println(log.toString());
+        System.out.println(log.toString());
 
         return true;
     }

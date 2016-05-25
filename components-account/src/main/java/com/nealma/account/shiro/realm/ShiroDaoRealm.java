@@ -1,25 +1,21 @@
 package com.nealma.account.shiro.realm;
 
 import com.nealma.account.service.ManagerService;
-import com.nealma.account.service.UserService;
 import com.nealma.framework.model.Resource;
 import com.nealma.framework.model.Role;
 import com.nealma.framework.model.User;
-import org.apache.ibatis.datasource.DataSourceException;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.apache.shiro.util.ByteSource;
 import org.apache.shiro.util.SimpleByteSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -34,15 +30,17 @@ public class ShiroDaoRealm extends AuthorizingRealm {
 
     @Autowired
     ManagerService managerService;
+
     /**
      * 授权
+     *
      * @param principalCollection
      * @return
      */
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
 
-        if( principalCollection == null ){
+        if (principalCollection == null) {
             throw new AuthorizationException("principal can't be null");
         }
         /*用户的角色*/
@@ -53,14 +51,14 @@ public class ShiroDaoRealm extends AuthorizingRealm {
         User user = managerService.fetchByUsername((String) principalCollection.getPrimaryPrincipal());
 
         List<Role> roles = user.getRoles();
-        if(roles != null){
-            for (Role role : roles){
+        if (roles != null) {
+            for (Role role : roles) {
                 roleNames.add(role.getName());
             }
         }
         List<Resource> resources = user.getResources();
-        if(resources != null){
-            for (Resource resource : resources){
+        if (resources != null) {
+            for (Resource resource : resources) {
                 resourceNames.add(resource.getPermission());
             }
         }
@@ -83,7 +81,6 @@ public class ShiroDaoRealm extends AuthorizingRealm {
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token)
             throws AuthenticationException {
 
-        LOGGER.debug("--------doGetAuthenticationInfo---------");
         String username = (String) token.getPrincipal();
         // 调用ManagerService查询是否有此用户
         User user = managerService.fetchByUsername(username);
@@ -97,27 +94,26 @@ public class ShiroDaoRealm extends AuthorizingRealm {
 //            throw new LockedAccountException();
 //        }
 
-//        user.setPassword(password);
-
         LOGGER.info("username={}, password={}, credential={}, salt={}", token.getPrincipal(), user.getPassword(), token.getCredentials(), user.getSalt());
         /*查找到的用户与Token里面的用户进行比较  匹配则登陆成功，不匹配则登陆失败*/
         return new SimpleAuthenticationInfo(
                 user.getUsername(),
                 user.getPassword(),
                 new SerializableByteSource(user.getCredentialSalt().getBytes()),
-//                ByteSource.Util.bytes(user.getCredentialSalt()),
                 getName()
         );
     }
 
     /**
      * 退出登录即点击logout时清除登陆的所有信息
+     *
      * @param principals
      */
     @Override
     protected void doClearCache(PrincipalCollection principals) {
         Object principal = principals.getPrimaryPrincipal();
-        getCacheManager().getCache(principal.toString());
+//        LOGGER.debug("principal={}", getCacheManager().getCache(principal.toString()).toString());
+//        LOGGER.debug("principal={}", principal.toString());
         super.doClearCache(principals);
     }
 
@@ -135,10 +131,10 @@ public class ShiroDaoRealm extends AuthorizingRealm {
     public void clearCache(PrincipalCollection principals) {
         super.clearCache(principals);
     }
+}
 
-    static class SerializableByteSource extends SimpleByteSource implements Serializable{
-        public SerializableByteSource(byte[] bytes) {
-            super(bytes);
-        }
+class SerializableByteSource extends SimpleByteSource implements Serializable {
+    public SerializableByteSource(byte[] bytes) {
+        super(bytes);
     }
 }

@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class LogAspect {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(LogAspect.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LogAspect.class);
 
     @Pointcut("execution(* com.nealma.account.rest.*.*(..))")
     public void logAround() {
