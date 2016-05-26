@@ -3,6 +3,7 @@ package com.nealma.account.rest;
 import com.nealma.account.service.ManagerService;
 import com.nealma.framework.annocation.SystemWebLayerLog;
 import com.nealma.framework.commons.StringUtil;
+import com.nealma.framework.model.User;
 import org.apache.ibatis.datasource.DataSourceException;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
@@ -135,7 +136,9 @@ public class LoginController {
     @RequiresPermissions("role:view")
     @SystemWebLayerLog(description = "用户列表")
     public ModelAndView rolelist() {
-        LOGGER.info("action -> {}", "rolelist");
+        Subject subject = SecurityUtils.getSubject();
+        User user = managerService.fetchByUsername(null);
+        LOGGER.info("action -> {}, user={}", "rolelist", user.getUsername());
         return new ModelAndView("view/role/rolelist");
     }
 

@@ -2,7 +2,7 @@ package com.nealma.framework.aspect;
 
 import com.nealma.framework.annocation.SystemServiceLayerLog;
 import com.nealma.framework.annocation.SystemWebLayerLog;
-import com.nealma.framework.exception.SensitivewordsExecption;
+import com.nealma.framework.exception.SensitiveWordsExecption;
 import com.nealma.framework.model.User;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterThrowing;
@@ -38,7 +38,7 @@ public class SystemLogAspect {
     }
 
     @Before("webLayer()")
-    public void doBefore(JoinPoint joinPoint) throws SensitivewordsExecption {
+    public void doBefore(JoinPoint joinPoint) throws SensitiveWordsExecption {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("userinfo");
@@ -53,7 +53,7 @@ public class SystemLogAspect {
         try {
             getWebLayerMethodDescription(joinPoint);
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }
     }
 
@@ -78,9 +78,9 @@ public class SystemLogAspect {
             }
         }
         try {
-            getWebLayerMethodDescription(joinPoint);
+            getServiceMthodDescription(joinPoint);
         } catch (Exception e1) {
-            e1.printStackTrace();
+//            e1.printStackTrace();
         }
     }
 
@@ -93,6 +93,7 @@ public class SystemLogAspect {
      */
     @SuppressWarnings("unchecked")
     public static String getWebLayerMethodDescription(JoinPoint joinPoint) throws Exception {
+        LOGGER.info("[ WebLayer ]");
         String targetName = joinPoint.getTarget().getClass().getName();
         String methodName = joinPoint.getSignature().getName();
         Object[] arguments = joinPoint.getArgs();
@@ -108,6 +109,7 @@ public class SystemLogAspect {
                 }
             }
         }
+        LOGGER.info("[ Web Layer ] : {}", description);
         return description;
     }
 
@@ -119,6 +121,7 @@ public class SystemLogAspect {
     @SuppressWarnings("unchecked")
     public static String getServiceMthodDescription(JoinPoint joinPoint)
             throws Exception {
+        LOGGER.info("[ ServiceLayer ]");
         String targetName = joinPoint.getTarget().getClass().getName();
         String methodName = joinPoint.getSignature().getName();
         Object[] arguments = joinPoint.getArgs();
@@ -134,6 +137,7 @@ public class SystemLogAspect {
                 }
             }
         }
+        LOGGER.info("[ ServiceLayer ] : {}", description);
         return description;
     }
 }

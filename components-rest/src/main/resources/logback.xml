@@ -5,7 +5,7 @@
         </encoder>
     </appender>
 
-    <logger name="com.nealma" level="DEBUG" additivity="false">
+    <logger name="com.nealma" level="info" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
 

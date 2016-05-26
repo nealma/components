@@ -2,6 +2,7 @@ package com.nealma.account.service.impl;
 
 import com.nealma.account.dao.*;
 import com.nealma.account.service.ManagerService;
+import com.nealma.framework.annocation.SystemServiceLayerLog;
 import com.nealma.framework.commons.Constants;
 import com.nealma.framework.commons.StringUtil;
 import com.nealma.framework.model.*;
@@ -30,6 +31,7 @@ public class ManagerServiceImpl implements ManagerService{
     private RoleResourceLinkDao roleResourceLinkDao;
 
     @Override
+    @SystemServiceLayerLog(description = "获取用户信息")
     public User fetchByUsername(String username) throws DataSourceException {
         if(username == null) {
             throw new IllegalArgumentException("username can't be null.");

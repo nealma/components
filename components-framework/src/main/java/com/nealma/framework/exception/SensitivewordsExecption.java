@@ -5,11 +5,11 @@ import org.apache.shiro.ShiroException;
 /**
  * Created by nealpc on 5/25/16.
  */
-public class SensitivewordsExecption extends ShiroException{
-    public SensitivewordsExecption() {
+public class SensitiveWordsExecption extends ShiroException{
+    public SensitiveWordsExecption() {
     }
 
-    public SensitivewordsExecption(String message) {
+    public SensitiveWordsExecption(String message) {
         super(message);
     }
 }
