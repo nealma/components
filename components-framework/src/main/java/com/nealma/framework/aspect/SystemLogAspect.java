@@ -1,5 +1,6 @@
 package com.nealma.framework.aspect;
 
+import com.nealma.framework.annocation.SystemDaoLayerLog;
 import com.nealma.framework.annocation.SystemServiceLayerLog;
 import com.nealma.framework.annocation.SystemWebLayerLog;
 import com.nealma.framework.exception.SensitiveWordsExecption;
@@ -37,8 +38,13 @@ public class SystemLogAspect {
 
     }
 
+    @Pointcut("@annotation(com.nealma.framework.annocation.SystemDaoLayerLog)")
+    public void daoLayer() {
+
+    }
+
     @Before("webLayer()")
-    public void doBefore(JoinPoint joinPoint) throws SensitiveWordsExecption {
+    public void doBeforeForWeb(JoinPoint joinPoint) throws SensitiveWordsExecption {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("userinfo");
@@ -52,6 +58,24 @@ public class SystemLogAspect {
         }
         try {
             getWebLayerMethodDescription(joinPoint);
+        } catch (Exception e) {
+//            e.printStackTrace();
+        }
+    }
+
+    @Before("daoLayer()")
+    public void doBeforeForDao(JoinPoint joinPoint) {
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        //请求的IP
+        String ip = request.getRemoteAddr();
+        Object[] os = joinPoint.getArgs();
+        if (os != null) {
+            for (Object o : os) {
+                LOGGER.debug("o = {}", o);
+            }
+        }
+        try {
+            getDaoMthodDescription(joinPoint);
         } catch (Exception e) {
 //            e.printStackTrace();
         }
@@ -85,7 +109,7 @@ public class SystemLogAspect {
     }
 
     /**
-     * 获取注解中对方法的描述信息 用于Controller层注解
+     * 获取注解中对方法的描述信息 用于web层注解
      *
      * @param joinPoint 切点
      * @return 方法描述
@@ -104,7 +128,7 @@ public class SystemLogAspect {
             if (method.getName().equals(methodName)) {
                 Class[] clazzs = method.getParameterTypes();
                 if (clazzs.length == arguments.length) {
-                    description = method.getAnnotation(SystemWebLayerLog. class).description();
+                    description = method.getAnnotation(SystemWebLayerLog.class).description();
                     break;
                 }
             }
@@ -114,6 +138,8 @@ public class SystemLogAspect {
     }
 
     /**
+     * 获取注解中对方法的描述信息 用于Service层注解
+     *
      * @param joinPoint 切点
      * @return 方法描述
      * @throws Exception
@@ -132,12 +158,52 @@ public class SystemLogAspect {
             if (method.getName().equals(methodName)) {
                 Class[] clazzs = method.getParameterTypes();
                 if (clazzs.length == arguments.length) {
-                    description = method.getAnnotation(SystemServiceLayerLog. class).description();
+                    description = method.getAnnotation(SystemServiceLayerLog.class).description();
                     break;
                 }
             }
         }
         LOGGER.info("[ ServiceLayer ] : {}", description);
+        return description;
+    }
+
+    /**
+     * 获取注解中对方法的描述信息 用于Dao层注解
+     *
+     * @param joinPoint 切点
+     * @return 方法描述
+     * @throws Exception
+     */
+    @SuppressWarnings("unchecked")
+    public static String getDaoMthodDescription(JoinPoint joinPoint)
+            throws Exception {
+        LOGGER.info("[ DaoLayer ]");
+        String targetName = joinPoint.getTarget().getClass().getName();
+        String methodName = joinPoint.getSignature().getName();
+        Object[] arguments = joinPoint.getArgs();
+        Class targetClass = Class.forName(targetName);
+        Method[] methods = targetClass.getMethods();
+        String description = "";
+        for (Method method : methods) {
+            if (method.getName().equals(methodName)) {
+                Class[] clazzs = method.getParameterTypes();
+                if (clazzs.length == arguments.length) {
+                    description = method.getAnnotation(SystemDaoLayerLog.class).description();
+                    break;
+                }
+            }
+        }
+
+//        DataSource annotation = o.getClass().getDeclaredMethod(methodName, joinPoint.getSignature().).getAnnotation(DataSource.class);
+//        if (null!=annotation) {
+//            DataSourceContextHolder.setDataSourceType(annotation.name());
+//        }else{
+//            annotation=o.getClass().getAnnotation(DataSource.class);
+//            if(null!=annotation){
+//                DataSourceContextHolder.setDataSourceType(annotation.name());
+//            }
+//        }
+        LOGGER.info("[ DaoLayer ] : {}", description);
         return description;
     }
 }

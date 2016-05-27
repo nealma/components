@@ -137,7 +137,7 @@ public class LoginController {
     @SystemWebLayerLog(description = "用户列表")
     public ModelAndView rolelist() {
         Subject subject = SecurityUtils.getSubject();
-        User user = managerService.fetchByUsername(null);
+        User user = managerService.fetchByUsername("jiecao");
         LOGGER.info("action -> {}, user={}", "rolelist", user.getUsername());
         return new ModelAndView("view/role/rolelist");
     }
