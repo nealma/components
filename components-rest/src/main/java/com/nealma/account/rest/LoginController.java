@@ -134,7 +134,7 @@ public class LoginController {
 
     @RequestMapping("/rolelist.do")
     @RequiresPermissions("role:view")
-    @SystemWebLayerLog(description = "用户列表")
+    @SystemWebLayerLog(description = "角色列表")
     public ModelAndView rolelist() {
         Subject subject = SecurityUtils.getSubject();
         User user = managerService.fetchByUsername("jiecao");
@@ -144,7 +144,7 @@ public class LoginController {
 
     @RequestMapping("/permissionlist.do")
     @RequiresPermissions("permission:view")
-    @SystemWebLayerLog(description = "用户列表")
+    @SystemWebLayerLog(description = "权限列表")
     public ModelAndView permissionlist() {
         LOGGER.info("action -> {}", "permissionlist");
         return new ModelAndView("view/permission/permissionlist");
@@ -152,7 +152,7 @@ public class LoginController {
 
     @RequestMapping("/loglist.do")
     @RequiresPermissions("log:view")
-    @SystemWebLayerLog(description = "用户列表")
+    @SystemWebLayerLog(description = "日志列表")
     public ModelAndView loglist() {
         LOGGER.info("action -> {}", "loglist");
         return new ModelAndView("view/log/loglist");

@@ -9,7 +9,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface DataSource {
-    String name() default DataSource.PAY;
-    public static String NEWS = "news";
-    public static String PAY = "pay";
+    String name() default DataSource.READ;
+    public static String WRITE = "write";
+    public static String READ = "read";
 }

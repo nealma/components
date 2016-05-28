@@ -15,7 +15,7 @@
     <tx:annotation-driven transaction-manager="account-transactionManager"/>
     <!-- 自动扫描，多个包以 逗号分隔 -->
     <context:component-scan base-package="com.nealma.account"/>
-    <aop:aspectj-autoproxy/>
+    <aop:aspectj-autoproxy proxy-target-class="true"/>
 
     <!-- 数据源部分 -->
     <bean id="parentDataSource" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close"

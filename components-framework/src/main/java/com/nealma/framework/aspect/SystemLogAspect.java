@@ -12,6 +12,7 @@ import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -25,6 +26,7 @@ import java.lang.reflect.Method;
  */
 @Aspect
 @Component
+@EnableAspectJAutoProxy
 public class SystemLogAspect {
     private static final Logger LOGGER = LoggerFactory.getLogger(SystemLogAspect.class);
 
@@ -65,6 +67,7 @@ public class SystemLogAspect {
 
     @Before("daoLayer()")
     public void doBeforeForDao(JoinPoint joinPoint) {
+
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         //请求的IP
         String ip = request.getRemoteAddr();
@@ -87,26 +90,26 @@ public class SystemLogAspect {
      * @param joinPoint
      * @param e
      */
-    @AfterThrowing(pointcut = "serviceLayer()", throwing = "e")
-    public synchronized void doAfterThrowing(JoinPoint joinPoint, Throwable e) {
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        HttpSession session = request.getSession();
-        //读取session中的用户
-        User user = (User) session.getAttribute("userinfo");
-        //获取请求ip
-        String ip = request.getRemoteAddr();
-        Object[] os = joinPoint.getArgs();
-        if (os != null) {
-            for (Object o : os) {
-                LOGGER.debug("o = {}", o);
-            }
-        }
-        try {
-            getServiceMthodDescription(joinPoint);
-        } catch (Exception e1) {
-//            e1.printStackTrace();
-        }
-    }
+//    @AfterThrowing(pointcut = "serviceLayer()", throwing = "e")
+//    public synchronized void doAfterThrowing(JoinPoint joinPoint, Throwable e) {
+//        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+//        HttpSession session = request.getSession();
+//        //读取session中的用户
+//        User user = (User) session.getAttribute("userinfo");
+//        //获取请求ip
+//        String ip = request.getRemoteAddr();
+//        Object[] os = joinPoint.getArgs();
+//        if (os != null) {
+//            for (Object o : os) {
+//                LOGGER.debug("o = {}", o);
+//            }
+//        }
+//        try {
+//            getServiceMthodDescription(joinPoint);
+//        } catch (Exception e1) {
+////            e1.printStackTrace();
+//        }
+//    }
 
     /**
      * 获取注解中对方法的描述信息 用于web层注解

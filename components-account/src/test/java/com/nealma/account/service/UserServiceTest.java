@@ -1,5 +1,6 @@
 package com.nealma.account.service;
 
+import com.nealma.account.dao.UserDao;
 import com.nealma.framework.commons.StringUtil;
 import com.nealma.framework.model.User;
 import org.junit.Test;
@@ -28,6 +29,9 @@ public class UserServiceTest {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    UserDao userDao;
 
     @Test
     public void insertTest() throws Exception {
@@ -77,5 +81,24 @@ public class UserServiceTest {
         StringUtil.isEmpty("");
         LOGGER.debug("random=", ThreadLocalRandom.current().nextInt(10));
 //        LOGGER.debug();
+    }
+
+
+    @Test
+    public void txDaoTest(){//wrong
+        User user = createUser();
+        user.setId(1l);
+
+        userDao.insert(user);
+        userDao.update(user);
+    }
+
+    @Test
+    public void txServiceTest(){//right
+        User user = createUser();
+        user.setId(1l);
+
+        userService.insert(user);
+//        userService.update(user);
     }
 }

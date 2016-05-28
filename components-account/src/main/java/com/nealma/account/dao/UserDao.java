@@ -1,6 +1,5 @@
 package com.nealma.account.dao;
 
-import com.nealma.framework.annocation.SystemDaoLayerLog;
 import com.nealma.framework.dao.BaseDao;
 import com.nealma.framework.model.User;
 import org.apache.ibatis.annotations.Param;
@@ -13,6 +12,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserDao extends BaseDao<User> {
 
-    @SystemDaoLayerLog(description = "用户操作")
     public User fetchByUsername(@Param("username") String username) throws DataSourceException;
 }

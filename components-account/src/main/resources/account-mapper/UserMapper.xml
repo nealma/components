@@ -10,7 +10,7 @@
 
     <!--  ################### update ################### -->
     <update id="update" parameterType="com.nealma.framework.model.User">
-        update t_user
+        update t_useri
         <include refid="sql_set"/>
         where id = #{id}
     </update>
