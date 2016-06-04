@@ -33,7 +33,6 @@ public class ManagerServiceImpl implements ManagerService {
 
     @Override
     @SystemServiceLayerLog(description = "获取用户信息")
-    @SystemDaoLayerLog(description = "用户操作")
     public User fetchByUsername(String username) throws DataSourceException {
         if (username == null) {
             throw new IllegalArgumentException("username can't be null.");

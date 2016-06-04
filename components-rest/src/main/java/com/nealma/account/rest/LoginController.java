@@ -4,6 +4,7 @@ import com.nealma.account.service.ManagerService;
 import com.nealma.framework.annocation.SystemWebLayerLog;
 import com.nealma.framework.commons.StringUtil;
 import com.nealma.framework.model.User;
+import com.nealma.framework.web.BaseController;
 import org.apache.ibatis.datasource.DataSourceException;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
@@ -26,9 +27,7 @@ import static org.apache.shiro.web.filter.authc.FormAuthenticationFilter.DEFAULT
  * Created by nealpc on 5/21/16.
  */
 @RestController
-public class LoginController {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(LoginController.class);
+public class LoginController extends BaseController{
 
     @Autowired
     private ManagerService managerService;
