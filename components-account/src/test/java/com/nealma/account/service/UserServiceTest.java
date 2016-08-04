@@ -13,6 +13,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -98,8 +99,20 @@ public class UserServiceTest {
         User user = createUser();
         user.setId(1l);
 
-        userService.insert(user);
+//        userService.insert(user);
 //        userService.update(user);
+
+        List<Long> ids = new ArrayList<Long>();
+        ids.add(1L);
+        ids.add(1L);
+        ids.add(1L);
+        ids.add(1L);
+        ids.add(1L);
+        System.out.println(ids.toString().replace("[", "").replace("]", ""));
+
+        StringBuffer s = new StringBuffer("0123456789");
+        System.out.println(s.delete(s.length()-3, 9));
+        System.out.println(ids.contains(1l));
     }
 
 }

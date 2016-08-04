@@ -8,7 +8,7 @@
     <!--<properties url="/Users/nealpc/work/java/components/components-account/src/main/resources/generatorConfig.properties"/>-->
 
     <!--数据库驱动包路径 -->
-    <classPathEntry location="/Users/nealpc/.m2/repository/mysql/mysql-connector-java/5.1.36/mysql-connector-java-5.1.36.jar"/>
+    <!--<classPathEntry location="/Users/nealpc/.m2/repository/mysql/mysql-connector-java/5.1.36/mysql-connector-java-5.1.36.jar"/>-->
 
     <context id="MySQLTables" targetRuntime="MyBatis3">
     <!-- 为了防止生成的代码中有很多注释，比较难看，加入下面的配置控制 -->
